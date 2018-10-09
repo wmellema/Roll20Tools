@@ -40,12 +40,17 @@ for key,value in json_buffer.items():
         try:
         # print(k)
         # print(json.dumps(v,indent=4))
+
+            filename = (v['name']+"-"+k).replace("/"," ").replace("\\"," ")
+            if os.path.exists(os.path.join(directory_name,filename)):
+                continue
             req = requests.get(v['fullsize_url'], stream=True)
             req.raise_for_status()
-            with open(os.path.join(directory_name,v['name']+"-"+k),'wb') as fd:
+
+            with open(os.path.join(directory_name,filename),'wb') as fd:
                 for chunk in req.iter_content(chunk_size=50000):
                     fd.write(chunk)
-            filename = (os.path.join(directory_name,v['name']+"-"+k))
+            filename = (os.path.join(directory_name,filename))
             extention = magic.from_file(filename,mime=True).split("/")[1].strip()
             os.rename(filename,filename+"."+extention)
         except:
